@@ -1,16 +1,18 @@
 <template>
   <div class="container">
     <div class="main">
-      <baidu-map class="map" :center="{lng: 116.404, lat: 39.915}" :zoom="15" :scroll-wheel-zoom="true" @click="clickMapPoint">
+      <baidu-map class="map" :center="'银川市'" :zoom="5" :scroll-wheel-zoom="true" @click="clickMapPoint" @rightclick="cancelNowPoint">
         <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" @locationSuccess="locationSuccess"></bm-geolocation>
 
-        <bm-marker v-for="(todo, index) in pointList" :key="index" :position="todo.point" :dragging="true"></bm-marker>
+        <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
+
+        <bm-marker v-for="(todo, index) in pointList" :key="index" :position="todo.point" @click="clickAlreadyPoint"></bm-marker>
 
         <bm-marker v-if="isPointNow" :position="nowPoint" :dragging="true"  animation="BMAP_ANIMATION_BOUNCE"></bm-marker>
       </baidu-map>
     </div>
     <div class="side">
-
+      <button @click="addToList"></button>
     </div>
   </div>
 </template>
@@ -19,7 +21,38 @@
 export default {
   data() {
     return {
-      pointList: [],
+      pointList: [
+        {
+          point: {
+            lat: 37.871194,
+            lng: 112.619483
+          }
+        },
+        {
+          point: {
+            lat: 38.425669,
+            lng: 112.754301
+          }
+        },
+        {
+          point: {
+            lat: 45.782159,
+            lng: 126.689643
+          }
+        },
+        {
+          point: {
+            lat: 48.672181,
+            lng: 126.207253
+          }
+        },
+        {
+          point: {
+            lat: 36.59184,
+            lng: 101.887535
+          }
+        }
+      ],
       nowPoint: {},
       isPointNow: false
     }
@@ -38,6 +71,27 @@ export default {
       // });
       this.isPointNow = true;
       this.nowPoint = e.point;
+    },
+    cancelNowPoint() {
+      this.isPointNow = false;
+      this.nowPoint = {};
+    },
+    addToList() {
+      if(this.nowPoint) {
+        this.pointList.push({
+          point: this.nowPoint
+        });
+
+        this.nowPoint = {};
+        this.isPointNow = false;
+      }
+    },
+    clickAlreadyPoint(e) {
+      console.log(e);
+      
+      e.domEvent.stopPropagation()
+
+      // e.stop
     }
   }
 }
