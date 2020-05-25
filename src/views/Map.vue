@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="main">
-      <baidu-map class="map" :center="'银川市'" :zoom="5" :scroll-wheel-zoom="true" @click="clickMapPoint" @rightclick="cancelNowPoint">
+      <!-- <baidu-map class="map" :center="'银川市'" :zoom="5" :scroll-wheel-zoom="true" @click="clickMapPoint" @rightclick="cancelNowPoint">
         <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" @locationSuccess="locationSuccess"></bm-geolocation>
 
         <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
@@ -9,7 +9,8 @@
         <bm-marker v-for="(todo, index) in pointList" :key="index" :position="todo.point" @click="clickAlreadyPoint"></bm-marker>
 
         <bm-marker v-if="isPointNow" :position="nowPoint" :dragging="true"  animation="BMAP_ANIMATION_BOUNCE"></bm-marker>
-      </baidu-map>
+      </baidu-map> -->
+      <div class="map" id="map-id" ref="mapMain"></div>
     </div>
     <div class="side">
       <button @click="addToList"></button>
@@ -21,6 +22,9 @@
 export default {
   data() {
     return {
+      map: null,
+      markerLayer: null,
+      flagPoint: null,
       pointList: [
         {
           point: {
@@ -58,7 +62,53 @@ export default {
     }
   },
 
+  mounted() {
+    this.initMap();
+  },
+
   methods: {
+    initMap() {
+//       lat: 33.368166978723806
+// lng: 107.03834933695452
+      const center = new TMap.LatLng(31.739047478946276, 104.13899911568569)
+      //定义map变量，调用 TMap.Map() 构造函数创建地图
+      this.map = new TMap.Map(this.$refs.mapMain, {
+        center: center,
+        zoom: 4,
+        viewMode: '2D',
+        mapStyleId: 'style1'
+      });
+
+      this.map.on('click', e => this.clickMapPoint(e));
+      this.map.on('rightclick', e => this.clickMapPoint(e));
+
+      this.initPointLayer();
+    },
+    initPointLayer() {
+      const mapPoints = this.pointList.map(item => {
+        return {
+          position: new TMap.LatLng(item.point.lat, item.point.lng)
+        }
+      });
+      console.log(mapPoints);
+
+      this.markerLayer = new TMap.MultiMarker({
+        map: this.map,
+        //样式定义
+        // styles: {
+        //     //创建一个styleId为"myStyle"的样式（styles的子属性名即为styleId）
+        //     "myStyle": new TMap.MarkerStyle({ 
+        //         "width": 25,  // 点标记样式宽度（像素）
+        //         "height": 35, // 点标记样式高度（像素）
+        //         "src": '../img/marker.png',  //图片路径
+        //         //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+        //         "anchor": { x: 16, y: 32 }  
+        //     }) 
+        // },
+        //点标记数据数组
+        geometries: mapPoints
+      });
+    },
     // {lng: 116.404, lat: 39.915}
     locationSuccess(e) {
       console.log(e);
@@ -66,11 +116,37 @@ export default {
     clickMapPoint(e) {
       console.log(e);
 
+      console.log('center');
+      console.log(this.map.getCenter())
+
       // this.pointList.push({
       //   point: e.point
       // });
-      this.isPointNow = true;
-      this.nowPoint = e.point;
+      // this.isPointNow = true;
+      // this.nowPoint = e.point;
+
+      if(!this.isPointNow) {
+        const flagPoint = new TMap.LatLng(e.latLng.lat, e.latLng.lng);
+
+        this.markerLayer.add([
+          {
+            id: 'flagPoint',
+            position: flagPoint
+          }
+        ]);
+
+        this.isPointNow = true;
+      }
+      else {
+        const flagPoint = new TMap.LatLng(e.latLng.lat, e.latLng.lng);
+
+        this.markerLayer.updateGeometries([
+          {
+            id: 'flagPoint',
+            position: flagPoint
+          }
+        ]);
+      }
     },
     cancelNowPoint() {
       this.isPointNow = false;
@@ -119,7 +195,7 @@ export default {
     border-radius: 5px;
 
     .map {
-      height: 600px;
+      height: 750px;
     }
   }
 
