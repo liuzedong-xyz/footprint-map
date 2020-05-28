@@ -55,6 +55,18 @@ export default {
             lat: 36.59184,
             lng: 101.887535
           }
+        },
+        {
+          point: {
+            lat: 37.59184,
+            lng: 100.887535
+          }
+        },
+        {
+          point: {
+            lat: 33.59184,
+            lng: 100.887535
+          }
         }
       ],
       nowPoint: {},
@@ -67,6 +79,9 @@ export default {
   },
 
   methods: {
+    randNum() {
+      return Math.floor(Math.random() * 6 + 1);
+    },
     initMap() {
 //       lat: 33.368166978723806
 // lng: 107.03834933695452
@@ -79,15 +94,20 @@ export default {
         mapStyleId: 'style1'
       });
 
-      this.map.on('click', e => this.clickMapPoint(e));
-      this.map.on('rightclick', e => this.clickMapPoint(e));
+      // this.map.on('click', e => this.clickMapPoint(e));
+      this.map.on('click', e => {
+        console.log(e);
+        e.originalEvent.stopPropagation();
+      });
 
       this.initPointLayer();
     },
     initPointLayer() {
       const mapPoints = this.pointList.map(item => {
         return {
-          position: new TMap.LatLng(item.point.lat, item.point.lng)
+          position: new TMap.LatLng(item.point.lat, item.point.lng),
+          styleId: 'myStyle-' + this.randNum()
+          // src: require('@/../public/img/green.png')
         }
       });
       console.log(mapPoints);
@@ -95,29 +115,71 @@ export default {
       this.markerLayer = new TMap.MultiMarker({
         map: this.map,
         //样式定义
-        // styles: {
-        //     //创建一个styleId为"myStyle"的样式（styles的子属性名即为styleId）
-        //     "myStyle": new TMap.MarkerStyle({ 
-        //         "width": 25,  // 点标记样式宽度（像素）
-        //         "height": 35, // 点标记样式高度（像素）
-        //         "src": '../img/marker.png',  //图片路径
-        //         //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
-        //         "anchor": { x: 16, y: 32 }  
-        //     }) 
-        // },
+        styles: {
+            //创建一个styleId为"myStyle"的样式（styles的子属性名即为styleId）
+            'myStyle-1': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/green.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+            'myStyle-2': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/blue.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+            'myStyle-3': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/purple.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+            'myStyle-4': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/deepblue.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+            'myStyle-5': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/cherry.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+            'myStyle-6': new TMap.MarkerStyle({ 
+                width: 18,  // 点标记样式宽度（像素）
+                height: 18, // 点标记样式高度（像素）
+                src: require('@/../public/img/red.png'),  //图片路径
+                //焦点在图片中的像素位置，一般大头针类似形式的图片以针尖位置做为焦点，圆形点以圆心位置为焦点
+                anchor: { x: 9, y: 9 }  
+            }),
+        },
         //点标记数据数组
         geometries: mapPoints
       });
+
+      this.markerLayer.on('click', e => {
+        console.log(e, 'layer click');
+
+        e.originalEvent.stopPropagation();
+      })
     },
     // {lng: 116.404, lat: 39.915}
     locationSuccess(e) {
       console.log(e);
     },
     clickMapPoint(e) {
-      console.log(e);
+      console.log(e, 'map');
+      e.originalEvent.stopPropagation();
 
-      console.log('center');
-      console.log(this.map.getCenter())
+      // console.log('center');
+      // console.log(this.map.getCenter())
 
       // this.pointList.push({
       //   point: e.point

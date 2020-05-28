@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+高德地图文档
+https://lbs.amap.com/api/javascript-api/summary
