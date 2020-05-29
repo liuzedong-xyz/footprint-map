@@ -91,7 +91,11 @@ export default {
           fillOpacity: 0.5,
           zIndex: 10,
           cursor: 'pointer',
-          clickable: true
+          clickable: true,
+          extData: {
+            id: item.id,
+            storyid: item.storyid
+          }
         })
 
         todoPoint.on('click', e => {
@@ -143,19 +147,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.map {
-  width: 100%;
-  // height: 300px;
-  color: #ff0000;
-}
-
 .main {
+  height: 100%;
   // padding: 10px;
   flex-grow: 1;
   overflow: hidden;
 
   .map {
-    height: 750px;
+    height: 100%;
   }
 }
 </style>
